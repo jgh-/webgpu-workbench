@@ -2,12 +2,14 @@ import os
 import subprocess
 import sys
 import shutil
-
+import urllib.request
 
 def prep_dawn(prep_dir, src_dir):
-    print("Cloning Dawn")
-    subprocess.call(["git", "clone", "--depth=1", "https://dawn.googlesource.com/dawn", f"{prep_dir}/dawn"])
-    os.makedirs(f"{prep_dir}/dawn/build", exist_ok=True)
+    if not os.path.isdir(f"{prep_dir}/dawn"):
+        print("Cloning Dawn")
+        subprocess.call(["git", "clone", "--depth=1", "https://dawn.googlesource.com/dawn", f"{prep_dir}/dawn"])
+        os.makedirs(f"{prep_dir}/dawn/build", exist_ok=True)
+    
     os.chdir(f"{prep_dir}/dawn")
     print("Downloading Dawn dependencies")
     subprocess.call([sys.executable, f"{prep_dir}/dawn/tools/fetch_dawn_dependencies.py", "--use-test-deps"])
@@ -33,11 +35,18 @@ def prep_dawn(prep_dir, src_dir):
     print(f"Installing Dawn in '{src_dir}/third_party'")
     subprocess.call(["cmake", "--install", f"{prep_dir}/dawn/build", "--config", "Debug", "--prefix", f"{src_dir}/third_party"])
 
+def prep_gpucpp(prep_dir, src_dir):
+    print("Download GPU.CPP")
+    os.makedirs(f"{src_dir}/third_party/include/gpu/utils", exist_ok=True)
+    urllib.request.urlretrieve("https://raw.githubusercontent.com/AnswerDotAI/gpu.cpp/main/gpu.h", f"{src_dir}/third_party/include/gpu/gpu.h")
+    urllib.request.urlretrieve("https://raw.githubusercontent.com/AnswerDotAI/gpu.cpp/main/utils/logging.h", f"{src_dir}/third_party/include/gpu/utils/logging.h")
+
 if __name__ == "__main__":
     src_dir = os.path.abspath(os.path.dirname(__file__))
     prep_dir = f"{src_dir}/.prep"
     os.makedirs(f"{src_dir}/third_party", exist_ok=True)
-    os.makedirs(f"{src_dir}/.prep", exist_ok=False)
+    os.makedirs(f"{src_dir}/.prep", exist_ok=True)
     prep_dawn(prep_dir, src_dir)
+    prep_gpucpp(prep_dir, src_dir)
     print("Cleaning up..")
-    shutil.rmtree(prep_dir)
+    #shutil.rmtree(prep_dir)

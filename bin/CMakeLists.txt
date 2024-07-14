@@ -1,1 +1,2 @@
 add_subdirectory(dawn_info)
+add_subdirectory(webgpu_init)
