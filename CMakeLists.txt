@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.30)
+project(webgpu-workbench)
+find_package(CUDAToolkit)
+set(CMAKE_CXX_STANDARD 20)
+include("${CMAKE_CURRENT_SOURCE_DIR}/third_party/lib/cmake/Dawn/DawnConfig.cmake")
+add_subdirectory(src)
+add_subdirectory(bin)

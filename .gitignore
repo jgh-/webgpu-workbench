@@ -1,0 +1,7 @@
+.prep/
+build/
+third_party/
+CMakeFiles/
+CMakeCache.txt
+.vscode/
+
