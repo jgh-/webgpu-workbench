@@ -24,9 +24,7 @@ def prep_dawn(prep_dir, src_dir):
                     "-DDAWN_ENABLE_INSTALL=ON",
                     "-DDAWN_BUILD_MONOLITHIC_LIBRARY=ON",
                     "-DCMAKE_BUILD_TYPE=Debug",
-                    "-DBUILD_SAMPLES=ON",
-                    "-DDAWN_ENABLE_PIC=ON",
-                    "-DBUILD_SHARED_LIBS=OFF",
+                    "-DBUILD_SAMPLES=OFF",
                     f"-B{prep_dir}/dawn/build",
                     f"{prep_dir}/dawn"
                     ], env=env)
@@ -35,18 +33,11 @@ def prep_dawn(prep_dir, src_dir):
     print(f"Installing Dawn in '{src_dir}/third_party'")
     subprocess.call(["cmake", "--install", f"{prep_dir}/dawn/build", "--config", "Debug", "--prefix", f"{src_dir}/third_party"])
 
-def prep_gpucpp(prep_dir, src_dir):
-    print("Download GPU.CPP")
-    os.makedirs(f"{src_dir}/third_party/include/gpu/utils", exist_ok=True)
-    urllib.request.urlretrieve("https://raw.githubusercontent.com/AnswerDotAI/gpu.cpp/main/gpu.h", f"{src_dir}/third_party/include/gpu/gpu.h")
-    urllib.request.urlretrieve("https://raw.githubusercontent.com/AnswerDotAI/gpu.cpp/main/utils/logging.h", f"{src_dir}/third_party/include/gpu/utils/logging.h")
-
 if __name__ == "__main__":
     src_dir = os.path.abspath(os.path.dirname(__file__))
     prep_dir = f"{src_dir}/.prep"
     os.makedirs(f"{src_dir}/third_party", exist_ok=True)
     os.makedirs(f"{src_dir}/.prep", exist_ok=True)
     prep_dawn(prep_dir, src_dir)
-    prep_gpucpp(prep_dir, src_dir)
     print("Cleaning up..")
     #shutil.rmtree(prep_dir)
